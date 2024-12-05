@@ -12,12 +12,12 @@ public class VerificadorTelefoneNulo implements Verificador<Telefone> {
 
 	@Override
 	public boolean verificar(Telefone objeto) {
-		if (objeto != null) {
-			boolean ddd = verificadorString.verificar(objeto.getDdd());
-			boolean numero = verificadorString.verificar(objeto.getNumero());
-			return ddd | numero;
-		} else {
-			return true;
+		if (objeto == null) {
+			return true; // Objeto nulo é inválido
 		}
+		
+		boolean dddInvalido = verificadorString.verificar(objeto.getDdd());
+		boolean numeroInvalido = verificadorString.verificar(objeto.getNumero());
+		return dddInvalido || numeroInvalido; // Retorna true se qualquer campo for inválido
 	}
 }

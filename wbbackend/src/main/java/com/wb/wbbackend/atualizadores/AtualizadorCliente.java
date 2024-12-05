@@ -20,34 +20,39 @@ public class AtualizadorCliente implements Atualizador<Cliente> {
 	@Autowired
 	private VerificadorTelefoneNulo verificadorTelefone;
 
+
 	@Override
-	public void atualizar(Cliente alvo, Cliente atualizacao) {
-		if (!verificadorString.verificar(atualizacao.getNome())) {
-			alvo.setNome(atualizacao.getNome());
-		}
-		if (!verificadorString.verificar(atualizacao.getEmail())) {
-			alvo.setEmail(atualizacao.getEmail());
-		}
-		if (!verificadorString.verificar(atualizacao.getSobreNome())) {
-			alvo.setSobreNome(atualizacao.getSobreNome());
-		}
-		if (!verificadorEndereco.verificar(atualizacao.getEndereco())) {
-			if (alvo.getEndereco() != null) {
-				atualizadorEndereco.atualizar(alvo.getEndereco(), atualizacao.getEndereco());
-			} else {
-				alvo.setEndereco(atualizacao.getEndereco());
-			}
-		}
-		if (atualizacao.getTelefones().size() > 0) {
-			alvo.getTelefones().clear();
-			for (Telefone telefone : atualizacao.getTelefones()) {
-				if (!verificadorTelefone.verificar(telefone)) {
-					Telefone novoTelefone = new Telefone();
-					novoTelefone.setDdd(telefone.getDdd());
-					novoTelefone.setNumero(telefone.getNumero());
-					alvo.getTelefones().add(telefone);
-				}
-			}
-		}
-	}
+    public void atualizar(Cliente alvo, Cliente atualizacao) {
+        if (alvo == null || atualizacao == null) {
+            throw new IllegalArgumentException("Alvo e atualizacao não podem ser nulos.");
+        }
+        
+        if (!verificadorString.verificar(atualizacao.getNome())) {
+            alvo.setNome(atualizacao.getNome());
+        }
+        if (!verificadorString.verificar(atualizacao.getEmail())) {
+            alvo.setEmail(atualizacao.getEmail());
+        }
+        if (!verificadorString.verificar(atualizacao.getSobreNome())) {
+            alvo.setSobreNome(atualizacao.getSobreNome());
+        }
+        if (!verificadorEndereco.verificar(atualizacao.getEndereco())) {
+            if (alvo.getEndereco() != null) {
+                atualizadorEndereco.atualizar(alvo.getEndereco(), atualizacao.getEndereco());
+            } else {
+                alvo.setEndereco(atualizacao.getEndereco());
+            }
+        }
+        if (atualizacao.getTelefones() != null && !atualizacao.getTelefones().isEmpty()) {
+            alvo.getTelefones().clear();
+            for (Telefone telefone : atualizacao.getTelefones()) {
+                if (!verificadorTelefone.verificar(telefone)) {
+                    Telefone novoTelefone = new Telefone();
+                    novoTelefone.setDdd(telefone.getDdd());
+                    novoTelefone.setNumero(telefone.getNumero());
+                    alvo.getTelefones().add(novoTelefone); // Adicionado `novoTelefone` em vez de `telefone`.
+                }
+            }
+        }
+    }
 }
